@@ -16,11 +16,27 @@
 
     <!-- Top Controls: Music, Lang, Theme -->
     <div class="top-controls">
-        <!-- Mini Music Player -->
-        <button class="control-btn" id="music-btn" onclick="toggleMusic()" title="Play Chill Music">
-            <i class="fa-solid fa-play" id="music-icon"></i>
-            <span id="music-title">Lofi</span>
-        </button>
+        <!-- Modern Mini Player -->
+        <div class="mini-player" id="mini-player">
+            <div class="player-top">
+                <div class="player-track-info">
+                    <i class="fa-solid fa-music music-note-icon"></i>
+                    <span id="music-title">Loading...</span>
+                </div>
+                <div class="player-controls">
+                    <button class="p-btn" onclick="prevTrack()" title="Previous"><i class="fa-solid fa-backward-step"></i></button>
+                    <button class="p-btn play-main" onclick="toggleMusic()" id="music-btn" title="Play/Pause">
+                        <i class="fa-solid fa-play" id="music-icon"></i>
+                    </button>
+                    <button class="p-btn" onclick="nextTrack()" title="Next"><i class="fa-solid fa-forward-step"></i></button>
+                </div>
+            </div>
+            <!-- Progress Bar -->
+            <div class="progress-bar-container" id="progress-container" onclick="seekAudio(event)">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
         <button class="control-btn" id="lang-btn" onclick="toggleLanguage()">
             <i class="fa-solid fa-globe"></i> <span id="lang-text">DE</span>
         </button>
