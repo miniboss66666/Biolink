@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pham Minh Quang | Bio</title>
+    <!-- Font Vibe Tech & Clean -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: rgba(20, 20, 20, 0.75);
+            --border-color: #333333;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --accent: #ffffff;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f7f7f7;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border-color: #e0e0e0;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --accent: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'JetBrains Mono', monospace;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Canvas Vector Dynamic Background */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Top Controls (Lang & Theme) */
+        .top-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .control-btn:hover {
+            border-color: var(--accent);
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 540px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        /* Screen 1: Welcome Name Input */
+        #welcome-screen {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .input-group {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mono-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+        }
+
+        .mono-input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-action {
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s transform;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.02);
+        }
+
+        /* Screen 2: Main Bio */
+        #main-bio {
+            display: none;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .avatar-box {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            object-fit: cover;
+            padding: 4px;
+            filter: grayscale(100%);
+            transition: 0.4s ease;
+        }
+
+        .avatar:hover {
+            filter: grayscale(0%);
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .intro-greet {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Details list */
+        .info-card {
+            border: 1px dashed var(--border-color);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .info-card i {
+            width: 24px;
+            color: var(--text-muted);
+        }
+
+        /* Links Grid */
+        .section-title {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: rgba(128, 128, 128, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .link-item:hover {
+            border-color: var(--accent);
+            background: rgba(128, 128, 128, 0.15);
+            transform: translateX(4px);
+        }
+
+        .link-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        /* Message Box */
+        .message-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: 25px;
+            margin-top: 10px;
+        }
+
+        textarea.mono-input {
+            resize: none;
+            height: 90px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .status-msg {
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 8px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Top Controls -->
+    <div class="top-controls">
+        <button class="control-btn" id="lang-btn" onclick="toggleLanguage()">
+            <i class="fa-solid fa-globe"></i> <span id="lang-text">DE</span>
+        </button>
+        <button class="control-btn" id="theme-btn" onclick="toggleTheme()">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- SCREEN 1: Name Input -->
+        <div id="welcome-screen">
+            <h2 id="ask-name-title" style="margin-bottom: 8px;">Wie heißt du?</h2>
+            <p id="ask-name-sub" style="color: var(--text-muted); font-size: 0.9rem;">Bevor wir anfangen, sag mir bitte deinen Namen.</p>
+            <div class="input-group">
+                <input type="text" id="visitor-name" class="mono-input" placeholder="Dein Name..." autofocus>
+                <button class="btn-action" onclick="enterBio()" id="btn-enter">Enter &rarr;</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: Bio details -->
+        <div id="main-bio">
+            <div class="avatar-box">
+                <!-- Bro thay ảnh avatar của bro vào đây -->
+                <img src="https://avatars.githubusercontent.com/miniboss66666" alt="Pham Minh Quang" class="avatar">
+            </div>
+
+            <div class="intro-greet" id="bio-greeting">
+                <!-- Sẽ inject text chào vào đây bằng JS -->
+            </div>
+
+            <div class="info-card">
+                <div><i class="fa-solid fa-ruler-vertical"></i> <span id="lbl-height">Größe</span>: <b>1m78</b></div>
+                <div><i class="fa-solid fa-calendar"></i> <span id="lbl-born">Geburtsjahr</span>: <b>2006</b></div>
+                <div><i class="fa-solid fa-earth-americas"></i> <span id="lbl-nat">Nationalität</span>: <b>Vietnam 🇻🇳</b></div>
+                <div><i class="fa-solid fa-heart"></i> <span id="lbl-hobbies">Hobbys</span>: <b>Sport, Games, Musik, Forschung & Coden</b></div>
+                <div><i class="fa-solid fa-infinity"></i> <span id="lbl-num">Lieblingszahl</span>: <b>&pi; (Pi)</b></div>
+                <div><i class="fa-solid fa-palette"></i> <span id="lbl-color">Lieblingsfarbe</span>: <b>Monochrome</b></div>
+                <div><i class="fa-solid fa-brain"></i> <span id="lbl-topic">Lieblingsthema</span>: <b>Wissenschaft, Tech, KI</b></div>
+            </div>
+
+            <div class="section-title" id="lbl-contact-title">Kontakt & Socials</div>
+            <div class="links-container">
+                <a href="tel:015206964495" class="link-item">
+                    <div class="link-left"><i class="fa-solid fa-phone"></i> <span>01520 6964495</span></div>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </a>
+                <a href="https://wa.me/4915206964495" target="_blank" class="link-item">
+                    <div class="link-left"><i class="fa-brands fa-whatsapp"></i> <span>WhatsApp</span></div>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </a>
+                <a href="https://instagram.com/" target="_blank" class="link-item">
+                    <div class="link-left"><i class="fa-brands fa-instagram"></i> <span>Instagram</span></div>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </a>
+                <a href="https://discord.com" target="_blank" class="link-item">
+                    <div class="link-left"><i class="fa-brands fa-discord"></i> <span>Discord</span></div>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </a>
+                <a href="https://steamcommunity.com" target="_blank" class="link-item">
+                    <div class="link-left"><i class="fa-brands fa-steam"></i> <span>Steam</span></div>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </a>
+                <a href="mailto:your_email@gmail.com" class="link-item">
+                    <div class="link-left"><i class="fa-solid fa-envelope"></i> <span>Gmail</span></div>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </a>
+                <a href="https://github.com/miniboss66666" target="_blank" class="link-item">
+                    <div class="link-left"><i class="fa-brands fa-github"></i> <span>GitHub</span></div>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </a>
+            </div>
+
+            <!-- Message Form to Google Sheets -->
+            <div class="message-section">
+                <p id="lbl-msg-title" style="margin-bottom: 12px; font-weight: 600; font-size: 0.95rem;">Möchtest du mir etwas sagen?</p>
+                <textarea id="guest-msg" class="mono-input" placeholder="Schreib hier etwas..."></textarea>
+                <button class="btn-action" style="width: 100%;" onclick="sendMessage()" id="btn-send">Senden &rarr;</button>
+                <div class="status-msg" id="status-msg"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CẤU HÌNH GOOGLE SHEETS ---
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz4IxAZfyMKdRHc_0RvfKlBNBDeScF0DjLdmDibYLCbukeMJEVNs5xXUNtUr3iSeLm0/exec";
+
+        // --- HỆ THỐNG ĐA NGÔN NGỮ (DE, VI, EN) ---
+        let currentLang = 'de';
+        let visitorName = '';
+
+        const i18n = {
+            de: {
+                askTitle: "Wie heißt du?",
+                askSub: "Bevor wir anfangen, sag mir bitte deinen Namen.",
+                askHolder: "Dein Name...",
+                btnEnter: "Enter →",
+                greet: (name) => `Hallo <b>${name}</b>, ich heiße <b>Pham Minh Quang</b> (Pham ist mein Nachname)! Aber du kannst mich einfach <b>P</b> nennen. Willkommen in meiner Ecke!`,
+                lblHeight: "Größe",
+                lblBorn: "Geburtsjahr",
+                lblNat: "Nationalität",
+                lblHobbies: "Hobbys",
+                valHobbies: "Sport, Games, Musik, Forschung & Coden",
+                lblNum: "Lieblingszahl",
+                lblColor: "Lieblingsfarbe",
+                lblTopic: "Lieblingsthema",
+                valTopic: "Wissenschaft, Tech, KI",
+                contactTitle: "Kontakt & Socials",
+                msgTitle: "Das ist alles über mich. Möchtest du mir noch etwas sagen?",
+                msgHolder: "Hinterlasse mir eine Nachricht...",
+                btnSend: "Senden →",
+                sending: "Wird gesendet...",
+                sent: "Nachricht gesendet! Vielen Dank :D",
+                error: "Fehler beim Senden. Bitte versuche es erneut."
+            },
+            vi: {
+                askTitle: "Bạn tên là gì?",
+                askSub: "Trước khi bắt đầu, hãy cho mình biết tên bạn nhé.",
+                askHolder: "Tên của bạn...",
+                btnEnter: "Tiếp tục →",
+                greet: (name) => `Chào <b>${name}</b>! Tôi tên là <b>Phạm Minh Quang</b> (Phạm là họ của tôi). Bạn có thể gọi tôi là <b>P</b>. Rất vui được gặp bạn!`,
+                lblHeight: "Chiều cao",
+                lblBorn: "Năm sinh",
+                lblNat: "Quốc tịch",
+                lblHobbies: "Sở thích",
+                valHobbies: "Thể thao, game, âm nhạc, nghiên cứu & Lập trình",
+                lblNum: "Số yêu thích",
+                lblColor: "Màu yêu thích",
+                lblTopic: "Chủ đề yêu thích",
+                valTopic: "Khoa học, Công nghệ, AI",
+                contactTitle: "Liên hệ & Mạng xã hội",
+                msgTitle: "Đó là tất cả về tôi, có điều gì bạn muốn nói với tôi không?",
+                msgHolder: "Nhập lời nhắn của bạn...",
+                btnSend: "Gửi lời nhắn →",
+                sending: "Đang gửi...",
+                sent: "Đã gửi thành công! Cảm ơn bạn :D",
+                error: "Có lỗi khi gửi. Thử lại sau nhé!"
+            },
+            en: {
+                askTitle: "What's your name?",
+                askSub: "Before we start, please let me know who you are.",
+                askHolder: "Your name...",
+                btnEnter: "Enter →",
+                greet: (name) => `Hello <b>${name}</b>! I'm <b>Pham Minh Quang</b> (Pham is my surname). You can call me <b>P</b>. Welcome to my space!`,
+                lblHeight: "Height",
+                lblBorn: "Birth Year",
+                lblNat: "Nationality",
+                lblHobbies: "Hobbies",
+                valHobbies: "Sports, games, music, research & Coding",
+                lblNum: "Favorite Number",
+                lblColor: "Favorite Color",
+                lblTopic: "Favorite Topic",
+                valTopic: "Science, Technology, AI",
+                contactTitle: "Contact & Socials",
+                msgTitle: "That's all about me. Is there anything you'd like to tell me?",
+                msgHolder: "Leave a message...",
+                btnSend: "Send →",
+                sending: "Sending...",
+                sent: "Message sent! Thank you :D",
+                error: "Error sending message. Try again!"
+            }
+        };
+
+        function updateTexts() {
+            const t = i18n[currentLang];
+            document.getElementById('lang-text').innerText = currentLang.toUpperCase();
+            document.getElementById('ask-name-title').innerText = t.askTitle;
+            document.getElementById('ask-name-sub').innerText = t.askSub;
+            document.getElementById('visitor-name').placeholder = t.askHolder;
+            document.getElementById('btn-enter').innerText = t.btnEnter;
+
+            if (visitorName) {
+                document.getElementById('bio-greeting').innerHTML = t.greet(visitorName);
+            }
+
+            document.getElementById('lbl-height').innerText = t.lblHeight;
+            document.getElementById('lbl-born').innerText = t.lblBorn;
+            document.getElementById('lbl-nat').innerText = t.lblNat;
+            document.getElementById('lbl-hobbies').innerText = t.lblHobbies;
+            document.getElementById('lbl-num').innerText = t.lblNum;
+            document.getElementById('lbl-color').innerText = t.lblColor;
+            document.getElementById('lbl-topic').innerText = t.lblTopic;
+            document.getElementById('lbl-contact-title').innerText = t.contactTitle;
+            document.getElementById('lbl-msg-title').innerText = t.msgTitle;
+            document.getElementById('guest-msg').placeholder = t.msgHolder;
+            document.getElementById('btn-send').innerText = t.btnSend;
+        }
+
+        function toggleLanguage() {
+            const langs = ['de', 'vi', 'en'];
+            let nextIndex = (langs.indexOf(currentLang) + 1) % langs.length;
+            currentLang = langs[nextIndex];
+            updateTexts();
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtnIcon = document.querySelector('#theme-btn i');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                themeBtnIcon.className = "fa-solid fa-sun";
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeBtnIcon.className = "fa-solid fa-moon";
+            }
+        }
+
+        function enterBio() {
+            const input = document.getElementById('visitor-name');
+            visitorName = input.value.trim() || (currentLang === 'de' ? 'Freund' : (currentLang === 'vi' ? 'Bạn' : 'Friend'));
+            
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('main-bio').style.display = 'block';
+            updateTexts();
+        }
+
+        document.getElementById('visitor-name').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') enterBio();
+        });
+
+        // --- GỬI TIN NHẮN ĐẾN GOOGLE SHEETS ---
+        async function sendMessage() {
+            const msgInput = document.getElementById('guest-msg');
+            const status = document.getElementById('status-msg');
+            const t = i18n[currentLang];
+            const message = msgInput.value.trim();
+
+            if (!message) return;
+
+            status.innerText = t.sending;
+            status.style.color = "var(--text-muted)";
+
+            try {
+                await fetch(GOOGLE_SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: visitorName, message: message })
+                });
+
+                status.innerText = t.sent;
+                status.style.color = "#4ade80";
+                msgInput.value = '';
+            } catch (err) {
+                status.innerText = t.error;
+                status.style.color = "#f87171";
+            }
+        }
+
+        // --- DYNAMIC VECTOR CANVAS (Hiệu ứng mạng lưới chùm sao) ---
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.7;
+                this.vy = (Math.random() - 0.5) * 0.7;
+                this.radius = 1.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+            }
+            draw() {
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                ctx.fillStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const strokeStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 110) {
+                        ctx.strokeStyle = strokeStyle;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
