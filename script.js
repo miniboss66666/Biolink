@@ -124,7 +124,7 @@ function updateGermanyTime() {
 setInterval(updateGermanyTime, 1000);
 updateGermanyTime();
 
-// ==================== MUSIC PLAYER (ADVANCED) ====================
+// ==================== MUSIC PLAYER (WITH TIME & PROGRESS) ====================
 const PLAYLIST = [
     { title: "La Campanella", url: "Piano background music.mp3" },
     { title: "Chinese Chill", url: "Chinese background music.mp3" },
@@ -145,14 +145,8 @@ function initMusicPlayer() {
 
     loadTrack(currentTrack);
 
-    // Cập nhật thanh tiến trình theo thời gian bài hát
     audio.ontimeupdate = updateProgress;
-
-    // Tự động nhảy bài khi hết nhạc
     audio.onended = () => nextTrack();
-
-    // Cố gắng tự động phát ngay khi vào web
-    autoPlayAttempt();
 }
 
 function loadTrack(index) {
@@ -161,26 +155,6 @@ function loadTrack(index) {
     const titleEl = document.getElementById('music-title');
     if (titleEl) titleEl.innerText = PLAYLIST[index].title;
     updateProgressBar(0);
-}
-
-function autoPlayAttempt() {
-    // Thử auto-play lúc mới tải trang
-    audio.play().then(() => {
-        setPlayState(true);
-    }).catch(() => {
-        // Nếu trình duyệt chặn, chờ cú click/chạm đầu tiên bất kỳ trên web là tự phát ngay
-        const startOnInteract = () => {
-            if (!isPlaying) {
-                audio.play().then(() => setPlayState(true)).catch(() => {});
-            }
-            window.removeEventListener('click', startOnInteract);
-            window.removeEventListener('keydown', startOnInteract);
-            window.removeEventListener('touchstart', startOnInteract);
-        };
-        window.addEventListener('click', startOnInteract);
-        window.addEventListener('keydown', startOnInteract);
-        window.addEventListener('touchstart', startOnInteract);
-    });
 }
 
 function setPlayState(playing) {
@@ -213,11 +187,21 @@ function prevTrack() {
     audio.play().then(() => setPlayState(true)).catch(err => console.log(err));
 }
 
-// Cập nhật thanh % tiến trình
+function formatTime(seconds) {
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
 function updateProgress() {
-    if (audio.duration) {
+    if (audio && audio.duration) {
         const percent = (audio.currentTime / audio.duration) * 100;
         updateProgressBar(percent);
+        const curEl = document.getElementById('current-time');
+        const durEl = document.getElementById('duration-time');
+        if (curEl) curEl.innerText = formatTime(audio.currentTime);
+        if (durEl) durEl.innerText = formatTime(audio.duration);
     }
 }
 
@@ -226,13 +210,36 @@ function updateProgressBar(percent) {
     if (bar) bar.style.width = `${percent}%`;
 }
 
-// Bấm vào thanh tiến trình để tua nhạc (Seek)
 function seekAudio(e) {
     if (!audio || !audio.duration) return;
     const container = document.getElementById('progress-container');
-    const width = container.clientWidth;
-    const clickX = e.offsetX;
-    audio.currentTime = (clickX / width) * audio.duration;
+    const rect = container.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percent = clickX / rect.width;
+    audio.currentTime = percent * audio.duration;
+}
+
+// ==================== TỰ ĐỘNG PHÁT NHẠC KHI BẮT ĐẦU ====================
+function startAISequence(isSkip = false) {
+    const input = document.getElementById('visitor-name');
+    visitorName = isSkip ? i18n[currentLang].defaultFriend : (input.value.trim() || i18n[currentLang].defaultFriend);
+
+    // 👉 TỰ ĐỘNG PHÁT NHẠC NGAY KHI KHÁCH CLICK BẮT ĐẦU VÀO WEB
+    if (audio && !isPlaying) {
+        audio.play().then(() => setPlayState(true)).catch(err => console.log("Autoplay:", err));
+    }
+
+    document.getElementById('welcome-screen').style.display = 'none';
+    const aiScreen = document.getElementById('ai-loading-screen');
+    aiScreen.style.display = 'block';
+    document.getElementById('ai-status-text').innerText = i18n[currentLang].aiGenerating;
+
+    setTimeout(() => {
+        aiScreen.style.display = 'none';
+        document.getElementById('main-bio').style.display = 'block';
+        updateTexts();
+        streamGreeting();
+    }, 1200);
 }
 
 // ==================== AI STREAMING SIMULATION ====================
