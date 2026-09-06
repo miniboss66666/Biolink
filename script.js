@@ -124,32 +124,30 @@ function updateGermanyTime() {
 setInterval(updateGermanyTime, 1000);
 updateGermanyTime();
 
-// ==================== MUSIC PLAYER (SAFE INIT) ====================
+// ==================== MUSIC PLAYER (SAFE & BULLETPROOF) ====================
 const PLAYLIST = [
-    { title: "La Campanella", url: encodeURI("Piano background music.mp3") },
-    { title: "Chinese Chill", url: encodeURI("Chinese background music.mp3") },
-    { title: "Cắt Đôi Nỗi Sầu", url: encodeURI("cắt đôi nỗi sầu.mp3") },
-    { title: "Blue Tequila", url: encodeURI("Táo Blue Tequila.mp3") },
-    { title: "Merry-Go-Round", url: encodeURI("Merry go round of life.mp3") }, // đã sửa lỗi .mp33
-    { title: "Ocean View", url: encodeURI("A town with a ocean view.mp3") },
-    { title: "Sơn Tùng M-TP", url: encodeURI("đừng làm trái tim anh đau.mp3") }
+    { title: "La Campanella", url: "Piano background music.mp3" },
+    { title: "Chinese Chill", url: "Chinese background music.mp3" },
+    { title: "Cắt Đôi Nỗi Sầu", url: "cắt đôi nỗi sầu.mp3" },
+    { title: "Blue Tequila", url: "Táo Blue Tequila.mp3" },
+    { title: "Merry-Go-Round", url: "Merry go round of life.mp3" },
+    { title: "Ocean View", url: "A town with a ocean view.mp3" },
+    { title: "Sơn Tùng M-TP", url: "đừng làm trái tim anh đau.mp3" }
 ];
 
 let currentTrack = Math.floor(Math.random() * PLAYLIST.length);
 let isPlaying = false;
-const audio = document.getElementById('bg-audio');
+let audio = null;
 
-function loadTrack(index) {
+function initMusicPlayer() {
+    audio = document.getElementById('bg-audio');
     if (!audio) return;
-    audio.src = PLAYLIST[index].url;
-    const titleEl = document.getElementById('music-title');
-    if (titleEl) titleEl.innerText = PLAYLIST[index].title;
-}
 
-if (audio) {
+    // Load bài ngẫu nhiên ban đầu
     loadTrack(currentTrack);
 
-    audio.addEventListener('ended', () => {
+    // Tự chuyển bài ngẫu nhiên khi bài hiện tại hát xong
+    audio.onended = () => {
         let nextTrack;
         do {
             nextTrack = Math.floor(Math.random() * PLAYLIST.length);
@@ -157,12 +155,22 @@ if (audio) {
 
         currentTrack = nextTrack;
         loadTrack(currentTrack);
-        audio.play().catch(e => console.log(e));
-    });
+        audio.play().catch(err => console.log("Auto-next blocked:", err));
+    };
+}
+
+function loadTrack(index) {
+    if (!audio || !PLAYLIST[index]) return;
+    // Tự động mã hoá URL cho các file có dấu cách / tiếng Việt
+    audio.src = encodeURI(PLAYLIST[index].url);
+    const titleEl = document.getElementById('music-title');
+    if (titleEl) titleEl.innerText = PLAYLIST[index].title;
 }
 
 function toggleMusic() {
+    if (!audio) audio = document.getElementById('bg-audio');
     if (!audio) return;
+
     const icon = document.getElementById('music-icon');
     if (!isPlaying) {
         audio.play().then(() => {
@@ -171,7 +179,7 @@ function toggleMusic() {
             const titleEl = document.getElementById('music-title');
             if (titleEl) titleEl.innerText = PLAYLIST[currentTrack].title;
         }).catch((err) => {
-            console.log("Audio play blocked by browser:", err);
+            console.log("Play failed / Browser policy:", err);
         });
     } else {
         audio.pause();
@@ -412,3 +420,9 @@ if (canvas) {
     }
     animate();
 }
+
+// ĐẶT Ở NGOÀI CÙNG NHƯ THẾ NÀY MỚI CHUẨN NÈ BRO:
+window.addEventListener('DOMContentLoaded', () => {
+    initMusicPlayer();
+    if (typeof updateTexts === 'function') updateTexts();
+});
