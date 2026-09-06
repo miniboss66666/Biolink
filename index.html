@@ -112,7 +112,7 @@
             margin-top: 25px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .mono-input {
@@ -144,6 +144,23 @@
 
         .btn-action:hover {
             transform: scale(1.02);
+        }
+
+        /* Nút Skip nhỏ tinh tế */
+        .btn-skip {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 6px;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: 0.2s color;
+        }
+
+        .btn-skip:hover {
+            color: var(--text-main);
         }
 
         /* Screen 2: Bio */
@@ -336,7 +353,8 @@
             <p id="ask-name-sub" style="color: var(--text-muted); font-size: 0.85rem;">Bevor wir anfangen, sag mir bitte deinen Namen.</p>
             <div class="input-group">
                 <input type="text" id="visitor-name" class="mono-input" placeholder="Dein Name..." autofocus>
-                <button class="btn-action" onclick="enterBio()" id="btn-enter">Enter &rarr;</button>
+                <button class="btn-action" onclick="enterBio(false)" id="btn-enter">Enter &rarr;</button>
+                <button class="btn-skip" onclick="enterBio(true)" id="btn-skip">Überspringen &rarr;</button>
             </div>
         </div>
 
@@ -380,7 +398,7 @@
 
                 <!-- Instagram -->
                 <div class="link-row">
-                    <a href="https://discordapp.com/users/560678903396565003" target="_blank" class="link-main-action">
+                    <a href="https://www.instagram.com/theonlypersonthatnobodyknow/" target="_blank" class="link-main-action">
                         <i class="fa-brands fa-instagram"></i> <span>Instagram</span>
                     </a>
                     <button class="btn-copy" onclick="copyText('https://www.instagram.com/theonlypersonthatnobodyknow/')" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
@@ -404,7 +422,7 @@
 
                 <!-- Gmail -->
                 <div class="link-row">
-                    <a href="mini46881@gmail.com" class="link-main-action">
+                    <a href="mailto:mini46881@gmail.com" class="link-main-action">
                         <i class="fa-solid fa-envelope"></i> <span>Gmail</span>
                     </a>
                     <button class="btn-copy" onclick="copyText('mini46881@gmail.com')" title="Copy Email"><i class="fa-regular fa-copy"></i></button>
@@ -431,7 +449,7 @@
     </div>
 
     <script>
-        // Link Google Apps Script của bro:
+        // Link Google Apps Script:
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz4IxAZfyMKdRHc_0RvfKlBNBDeScF0DjLdmDibYLCbukeMJEVNs5xXUNtUr3iSeLm0/exec";
 
         // --- HỆ THỐNG ĐA NGÔN NGỮ (DE, VI, EN) ---
@@ -444,6 +462,8 @@
                 askSub: "Bevor wir anfangen, sag mir bitte deinen Namen.",
                 askHolder: "Dein Name...",
                 btnEnter: "Enter →",
+                btnSkip: "Überspringen →",
+                defaultFriend: "mein Freund",
                 greet: (name) => `Hallo <b>${name}</b>! Ich heiße <b>Pham Minh Quang</b> (Pham ist mein Nachname). Aber du kannst mich einfach <b>P</b> (oder <b>Miniboss</b>) nennen. Willkommen in meiner Ecke!`,
                 lblHeight: "Größe",
                 lblBorn: "Geburtsjahr",
@@ -470,6 +490,8 @@
                 askSub: "Trước khi bắt đầu, hãy cho mình biết tên bạn nhé.",
                 askHolder: "Tên của bạn...",
                 btnEnter: "Tiếp tục →",
+                btnSkip: "Bỏ qua →",
+                defaultFriend: "bạn",
                 greet: (name) => `Chào <b>${name}</b>! Tôi tên là <b>Phạm Minh Quang</b> (Phạm là họ của tôi). Bạn có thể gọi tôi là <b>P</b> (hoặc <b>Miniboss</b>). Rất vui được gặp bạn!`,
                 lblHeight: "Chiều cao",
                 lblBorn: "Năm sinh",
@@ -496,6 +518,8 @@
                 askSub: "Before we start, please let me know who you are.",
                 askHolder: "Your name...",
                 btnEnter: "Enter →",
+                btnSkip: "Skip →",
+                defaultFriend: "my friend",
                 greet: (name) => `Hello <b>${name}</b>! I'm <b>Pham Minh Quang</b> (Pham is my surname). You can call me <b>P</b> (or <b>Miniboss</b>). Welcome to my space!`,
                 lblHeight: "Height",
                 lblBorn: "Birth Year",
@@ -526,6 +550,7 @@
             document.getElementById('ask-name-sub').innerText = t.askSub;
             document.getElementById('visitor-name').placeholder = t.askHolder;
             document.getElementById('btn-enter').innerText = t.btnEnter;
+            document.getElementById('btn-skip').innerText = t.btnSkip;
 
             if (visitorName) {
                 document.getElementById('bio-greeting').innerHTML = t.greet(visitorName);
@@ -567,9 +592,13 @@
             }
         }
 
-        function enterBio() {
+        function enterBio(isSkip = false) {
             const input = document.getElementById('visitor-name');
-            visitorName = input.value.trim() || (currentLang === 'de' ? 'Freund' : (currentLang === 'vi' ? 'Bạn' : 'Friend'));
+            if (isSkip) {
+                visitorName = i18n[currentLang].defaultFriend;
+            } else {
+                visitorName = input.value.trim() || i18n[currentLang].defaultFriend;
+            }
             
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('main-bio').style.display = 'block';
@@ -577,7 +606,7 @@
         }
 
         document.getElementById('visitor-name').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') enterBio();
+            if (e.key === 'Enter') enterBio(false);
         });
 
         // --- TÍNH NĂNG COPY NHANH ---
