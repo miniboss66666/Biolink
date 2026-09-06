@@ -1,61 +1,6 @@
 // ==================== CẤU HÌNH ====================
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz4IxAZfyMKdRHc_0RvfKlBNBDeScF0DjLdmDibYLCbukeMJEVNs5xXUNtUr3iSeLm0/exec";
 
-// ==================== MUSIC PLAYER (RANDOM & AUTO NEXT) ====================
-// Danh sách bài hát của bro trong GitHub:
-const PLAYLIST = [
-    { title: "Liszt - La Campanella", url: "Piano background music.mp3" },
-    { title: "佐小伊 - 露水情缘", url: "Chinese background music.mp3" },
-    { title: "Tăng Duy Tân - Cắt Đôi Nỗi Sầu", url: "cắt đôi nỗi sầu.mp3" },
-    { title: "Táo - Blue Tequila", url: "Táo Blue Tequila.mp3" },
-    { title: "Joe Hisaishi - Merry-Go-Round of Life", url: "Merry go round of life.mp33" },
-    { title: "Joe Hisaishi - A Town with an Ocean View", url: "A town with a ocean view.mp3" },
-    { title: "Sơn Tùng MTP - Đừng Làm Trái Tim Anh Đau", url: "đừng làm trái tim anh đau.mp3" }
-];
-
-// 1. Chọn ngẫu nhiên 1 bài ngay khi khách vừa mở trang
-let currentTrack = Math.floor(Math.random() * PLAYLIST.length);
-let isPlaying = false;
-
-const audio = document.getElementById('bg-audio');
-
-function loadTrack(index) {
-    audio.src = PLAYLIST[index].url;
-    document.getElementById('music-title').innerText = PLAYLIST[index].title;
-}
-
-// Load bài ngẫu nhiên ban đầu
-loadTrack(currentTrack);
-
-// 2. Tự động chuyển bài ngẫu nhiên khác khi bài hiện tại hát xong
-audio.addEventListener('ended', () => {
-    let nextTrack;
-    // Đảm bảo không bốc trùng lại đúng bài vừa phát (nếu playlist có từ 2 bài trở lên)
-    do {
-        nextTrack = Math.floor(Math.random() * PLAYLIST.length);
-    } while (PLAYLIST.length > 1 && nextTrack === currentTrack);
-
-    currentTrack = nextTrack;
-    loadTrack(currentTrack);
-    audio.play();
-});
-
-// 3. Nút Play / Pause
-function toggleMusic() {
-    const icon = document.getElementById('music-icon');
-    if (!isPlaying) {
-        audio.play().then(() => {
-            isPlaying = true;
-            icon.className = "fa-solid fa-pause";
-        }).catch((err) => {
-            console.log("Audio play error:", err);
-        });
-    } else {
-        audio.pause();
-        isPlaying = false;
-        icon.className = "fa-solid fa-play";
-    }
-}
 // ==================== ĐA NGÔN NGỮ ====================
 let currentLang = 'de';
 let visitorName = '';
@@ -152,40 +97,99 @@ const i18n = {
 
 // ==================== REALTIME GERMANY TIME & STATUS ====================
 function updateGermanyTime() {
-    const now = new Date();
-    // Múi giờ Đức: Europe/Berlin
-    const options = { timeZone: 'Europe/Berlin', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    const timeString = new Intl.DateTimeFormat([], options).format(now);
-    
-    document.getElementById('germany-time').innerText = `DE: ${timeString}`;
+    try {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Berlin', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const timeString = new Intl.DateTimeFormat([], options).format(now);
+        
+        const timeEl = document.getElementById('germany-time');
+        const statusEl = document.getElementById('germany-status');
+        
+        if (timeEl) timeEl.innerText = `DE: ${timeString}`;
 
-    // Xác định trạng thái theo giờ Đức
-    const hour = parseInt(timeString.split(':')[0]);
-    const statusEl = document.getElementById('germany-status');
-
-    if (hour >= 23 || hour < 7) {
-        statusEl.innerText = "Sleeping 🌙";
-    } else if (hour >= 8 && hour < 17) {
-        statusEl.innerText = "Studying / Coding ☕";
-    } else {
-        statusEl.innerText = "Gaming / Free time 🎮";
+        const hour = parseInt(timeString.split(':')[0]);
+        if (statusEl) {
+            if (hour >= 23 || hour < 7) {
+                statusEl.innerText = "Sleeping 🌙";
+            } else if (hour >= 8 && hour < 17) {
+                statusEl.innerText = "Studying / Coding ☕";
+            } else {
+                statusEl.innerText = "Gaming / Free time 🎮";
+            }
+        }
+    } catch(e) {
+        console.error("Time error:", e);
     }
 }
 setInterval(updateGermanyTime, 1000);
 updateGermanyTime();
+
+// ==================== MUSIC PLAYER (SAFE INIT) ====================
+const PLAYLIST = [
+    { title: "La Campanella", url: encodeURI("Piano background music.mp3") },
+    { title: "Chinese Chill", url: encodeURI("Chinese background music.mp3") },
+    { title: "Cắt Đôi Nỗi Sầu", url: encodeURI("cắt đôi nỗi sầu.mp3") },
+    { title: "Blue Tequila", url: encodeURI("Táo Blue Tequila.mp3") },
+    { title: "Merry-Go-Round", url: encodeURI("Merry go round of life.mp3") }, // đã sửa lỗi .mp33
+    { title: "Ocean View", url: encodeURI("A town with a ocean view.mp3") },
+    { title: "Sơn Tùng M-TP", url: encodeURI("đừng làm trái tim anh đau.mp3") }
+];
+
+let currentTrack = Math.floor(Math.random() * PLAYLIST.length);
+let isPlaying = false;
+const audio = document.getElementById('bg-audio');
+
+function loadTrack(index) {
+    if (!audio) return;
+    audio.src = PLAYLIST[index].url;
+    const titleEl = document.getElementById('music-title');
+    if (titleEl) titleEl.innerText = PLAYLIST[index].title;
+}
+
+if (audio) {
+    loadTrack(currentTrack);
+
+    audio.addEventListener('ended', () => {
+        let nextTrack;
+        do {
+            nextTrack = Math.floor(Math.random() * PLAYLIST.length);
+        } while (PLAYLIST.length > 1 && nextTrack === currentTrack);
+
+        currentTrack = nextTrack;
+        loadTrack(currentTrack);
+        audio.play().catch(e => console.log(e));
+    });
+}
+
+function toggleMusic() {
+    if (!audio) return;
+    const icon = document.getElementById('music-icon');
+    if (!isPlaying) {
+        audio.play().then(() => {
+            isPlaying = true;
+            if (icon) icon.className = "fa-solid fa-pause";
+            const titleEl = document.getElementById('music-title');
+            if (titleEl) titleEl.innerText = PLAYLIST[currentTrack].title;
+        }).catch((err) => {
+            console.log("Audio play blocked by browser:", err);
+        });
+    } else {
+        audio.pause();
+        isPlaying = false;
+        if (icon) icon.className = "fa-solid fa-play";
+    }
+}
 
 // ==================== AI STREAMING SIMULATION ====================
 function startAISequence(isSkip = false) {
     const input = document.getElementById('visitor-name');
     visitorName = isSkip ? i18n[currentLang].defaultFriend : (input.value.trim() || i18n[currentLang].defaultFriend);
 
-    // 1. Ẩn màn hình nhập tên, hiện màn hình AI Generating...
     document.getElementById('welcome-screen').style.display = 'none';
     const aiScreen = document.getElementById('ai-loading-screen');
     aiScreen.style.display = 'block';
     document.getElementById('ai-status-text').innerText = i18n[currentLang].aiGenerating;
 
-    // 2. Chờ 1.2s giả lập AI phản hồi
     setTimeout(() => {
         aiScreen.style.display = 'none';
         document.getElementById('main-bio').style.display = 'block';
@@ -195,23 +199,34 @@ function startAISequence(isSkip = false) {
 }
 
 function streamGreeting() {
-    const text = i18n[currentLang].greet(visitorName);
+    const fullHtml = i18n[currentLang].greet(visitorName);
     const greetingEl = document.getElementById('bio-greeting');
     greetingEl.innerHTML = '';
-    let index = 0;
+    
+    let charIndex = 0;
+    let isTag = false;
+    let currentText = '';
 
-    // Tốc độ bắn chữ như ChatGPT streaming (30ms / ký tự)
     const interval = setInterval(() => {
-        greetingEl.innerHTML = text.slice(0, index);
-        index++;
-        if (index > text.length) {
+        if (charIndex < fullHtml.length) {
+            let char = fullHtml[charIndex];
+            if (char === '<') isTag = true;
+            currentText += char;
+            if (char === '>') isTag = false;
+
+            charIndex++;
+            if (!isTag) {
+                greetingEl.innerHTML = currentText;
+            }
+        } else {
             clearInterval(interval);
-            // Sau khi gõ xong, hiện mượt các thông tin bên dưới
+            greetingEl.innerHTML = fullHtml;
+            
             document.getElementById('info-card').classList.add('revealed');
             document.getElementById('links-container').classList.add('revealed');
             document.getElementById('message-section').classList.add('revealed');
         }
-    }, 30);
+    }, 25);
 }
 
 // ==================== CÁC CHỨC NĂNG CƠ BẢN ====================
@@ -263,9 +278,12 @@ function toggleTheme() {
     }
 }
 
-document.getElementById('visitor-name').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') startAISequence(false);
-});
+const nameInput = document.getElementById('visitor-name');
+if (nameInput) {
+    nameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startAISequence(false);
+    });
+}
 
 function copyText(text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -276,27 +294,7 @@ function copyText(text) {
     });
 }
 
-// ==================== MUSIC PLAYER ====================
-const audio = document.getElementById('bg-audio');
-audio.src = PLAYLIST[currentTrack].url;
-
-function toggleMusic() {
-    const icon = document.getElementById('music-icon');
-    if (!isPlaying) {
-        audio.play().then(() => {
-            isPlaying = true;
-            icon.className = "fa-solid fa-pause";
-            document.getElementById('music-title').innerText = PLAYLIST[currentTrack].title;
-        }).catch(() => {});
-    } else {
-        audio.pause();
-        isPlaying = false;
-        icon.className = "fa-solid fa-play";
-    }
-}
-
 // ==================== EASTER EGGS ====================
-// 1. Easter Egg Mèo rơi
 function catEasterEgg() {
     const catEmojis = ['🐱', '😸', '🐈', '🐾', '😻', '✨'];
     for (let i = 0; i < 25; i++) {
@@ -311,7 +309,6 @@ function catEasterEgg() {
     }
 }
 
-// 2. Easter Egg Số Pi
 const pi100Digits = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679...";
 function piEasterEgg() {
     document.getElementById('pi-text').innerText = pi100Digits;
@@ -351,65 +348,67 @@ async function sendMessage() {
 
 // ==================== BACKGROUND VECTOR CANVAS ====================
 const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let particles = [];
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.6;
-        this.vy = (Math.random() - 0.5) * 0.6;
-        this.radius = 1.5;
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
-    update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
-        if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
-    }
-    draw() {
-        const isDark = document.body.getAttribute('data-theme') === 'dark';
-        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-for (let i = 0; i < 55; i++) particles.push(new Particle());
-
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const isDark = document.body.getAttribute('data-theme') === 'dark';
-    const strokeStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-
-    for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-
-        for (let j = i + 1; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 110) {
-                ctx.strokeStyle = strokeStyle;
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.stroke();
-            }
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.6;
+            this.vy = (Math.random() - 0.5) * 0.6;
+            this.radius = 1.5;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+            if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+        }
+        draw() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
         }
     }
-    requestAnimationFrame(animate);
+
+    for (let i = 0; i < 55; i++) particles.push(new Particle());
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const strokeStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 110) {
+                    ctx.strokeStyle = strokeStyle;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
 }
-animate();
