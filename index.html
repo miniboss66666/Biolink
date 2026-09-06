@@ -4,340 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pham Minh Quang (Miniboss) | Bio</title>
-    <!-- Font Vibe Tech & Clean -->
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-color: #0a0a0a;
-            --card-bg: rgba(20, 20, 20, 0.75);
-            --border-color: #333333;
-            --text-main: #f0f0f0;
-            --text-muted: #888888;
-            --accent: #ffffff;
-            --hover-bg: rgba(255, 255, 255, 0.08);
-        }
-
-        [data-theme="light"] {
-            --bg-color: #f7f7f7;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --border-color: #e0e0e0;
-            --text-main: #111111;
-            --text-muted: #666666;
-            --accent: #000000;
-            --hover-bg: rgba(0, 0, 0, 0.05);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'JetBrains Mono', monospace;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow-x: hidden;
-            padding: 20px;
-        }
-
-        /* Canvas Vector Dynamic Background */
-        #bgCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Top Controls */
-        .top-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 12px;
-            z-index: 100;
-        }
-
-        .control-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .control-btn:hover {
-            border-color: var(--accent);
-        }
-
-        /* Main Container */
-        .container {
-            width: 100%;
-            max-width: 520px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(15px);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            margin-top: 50px;
-            margin-bottom: 50px;
-        }
-
-        /* Screen 1: Welcome */
-        #welcome-screen {
-            text-align: center;
-            padding: 30px 10px;
-        }
-
-        .input-group {
-            margin-top: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .mono-input {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            padding: 14px 18px;
-            border-radius: 12px;
-            color: var(--text-main);
-            font-size: 1rem;
-            text-align: center;
-            outline: none;
-        }
-
-        .mono-input:focus {
-            border-color: var(--accent);
-        }
-
-        .btn-action {
-            background: var(--text-main);
-            color: var(--bg-color);
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s transform;
-        }
-
-        .btn-action:hover {
-            transform: scale(1.02);
-        }
-
-        /* Nút Skip nhỏ tinh tế */
-        .btn-skip {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            cursor: pointer;
-            margin-top: 6px;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-            transition: 0.2s color;
-        }
-
-        .btn-skip:hover {
-            color: var(--text-main);
-        }
-
-        /* Screen 2: Bio */
-        #main-bio {
-            display: none;
-            animation: fadeIn 0.8s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .avatar-box {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .avatar {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            object-fit: cover;
-            padding: 4px;
-            filter: grayscale(100%);
-            transition: 0.4s ease;
-        }
-
-        .avatar:hover {
-            filter: grayscale(0%);
-            transform: rotate(5deg) scale(1.05);
-        }
-
-        .intro-greet {
-            font-size: 1.02rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .info-card {
-            border: 1px dashed var(--border-color);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 25px;
-            font-size: 0.88rem;
-            line-height: 1.9;
-        }
-
-        .info-card i {
-            width: 24px;
-            color: var(--text-muted);
-        }
-
-        .section-title {
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        /* Link Items */
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .link-row {
-            display: flex;
-            align-items: center;
-            background: rgba(128, 128, 128, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: 0.2s border-color;
-        }
-
-        .link-row:hover {
-            border-color: var(--accent);
-        }
-
-        .link-main-action {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.92rem;
-            transition: 0.2s background;
-        }
-
-        .link-main-action:hover {
-            background: var(--hover-bg);
-        }
-
-        .link-main-action i {
-            width: 20px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-
-        .btn-copy {
-            background: transparent;
-            border: none;
-            border-left: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 12px 16px;
-            cursor: pointer;
-            transition: 0.2s all;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-copy:hover {
-            background: var(--hover-bg);
-            color: var(--accent);
-        }
-
-        /* Toast notification */
-        #toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--accent);
-            color: var(--bg-color);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            opacity: 0;
-            transition: 0.3s all cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        #toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        /* Message Box */
-        .message-section {
-            border-top: 1px solid var(--border-color);
-            padding-top: 25px;
-        }
-
-        textarea.mono-input {
-            resize: none;
-            height: 90px;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-
-        .status-msg {
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 8px;
-            color: var(--text-muted);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
 
     <canvas id="bgCanvas"></canvas>
     <div id="toast">Copied!</div>
 
-    <!-- Top Controls -->
+    <!-- Top Controls: Music, Lang, Theme -->
     <div class="top-controls">
+        <!-- Mini Music Player -->
+        <button class="control-btn" id="music-btn" onclick="toggleMusic()" title="Play Chill Music">
+            <i class="fa-solid fa-play" id="music-icon"></i>
+            <span id="music-title">Lofi</span>
+        </button>
         <button class="control-btn" id="lang-btn" onclick="toggleLanguage()">
             <i class="fa-solid fa-globe"></i> <span id="lang-text">DE</span>
         </button>
@@ -346,101 +29,94 @@
         </button>
     </div>
 
+    <!-- Background Audio Element -->
+    <audio id="bg-audio" loop preload="none"></audio>
+
     <div class="container">
+        <!-- Real-time Germany Time & Status Badge -->
+        <div class="status-badge" id="status-badge">
+            <span class="status-dot"></span>
+            <span id="germany-time">--:--:--</span> | <span id="germany-status">Loading...</span>
+        </div>
+
         <!-- SCREEN 1: Name Input -->
         <div id="welcome-screen">
-            <h2 id="ask-name-title" style="margin-bottom: 8px;">Wie heißt du?</h2>
-            <p id="ask-name-sub" style="color: var(--text-muted); font-size: 0.85rem;">Bevor wir anfangen, sag mir bitte deinen Namen.</p>
+            <h2 id="ask-name-title">Wie heißt du?</h2>
+            <p id="ask-name-sub">Bevor wir anfangen, sag mir bitte deinen Namen.</p>
             <div class="input-group">
                 <input type="text" id="visitor-name" class="mono-input" placeholder="Dein Name..." autofocus>
-                <button class="btn-action" onclick="enterBio(false)" id="btn-enter">Enter &rarr;</button>
-                <button class="btn-skip" onclick="enterBio(true)" id="btn-skip">Überspringen &rarr;</button>
+                <button class="btn-action" onclick="startAISequence(false)" id="btn-enter">Enter &rarr;</button>
+                <button class="btn-skip" onclick="startAISequence(true)" id="btn-skip">Überspringen &rarr;</button>
             </div>
         </div>
 
-        <!-- SCREEN 2: Main Bio -->
+        <!-- SCREEN 2: AI Loading Screen -->
+        <div id="ai-loading-screen">
+            <div class="ai-loader">
+                <i class="fa-solid fa-microchip fa-spin"></i>
+                <span id="ai-status-text">AI is generating profile...</span>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: Main Bio -->
         <div id="main-bio">
             <div class="avatar-box">
-                <img src="avatar.jpg" alt="Pham Minh Quang" class="avatar">
+                <img src="avatar.jpg" alt="Pham Minh Quang" class="avatar" id="avatar-img">
             </div>
 
-            <div class="intro-greet" id="bio-greeting"></div>
+            <!-- AI Typing Streaming Box -->
+            <div class="intro-greet">
+                <span id="bio-greeting"></span><span class="cursor">|</span>
+            </div>
 
-            <div class="info-card">
+            <!-- Bio details (chỉ hiện sau khi AI gõ xong) -->
+            <div class="info-card" id="info-card">
                 <div><i class="fa-solid fa-ruler-vertical"></i> <span id="lbl-height">Größe</span>: <b>1m78</b></div>
                 <div><i class="fa-solid fa-calendar"></i> <span id="lbl-born">Geburtsjahr</span>: <b>2006</b></div>
                 <div><i class="fa-solid fa-earth-americas"></i> <span id="lbl-nat">Nationalität</span>: <b>Vietnam 🇻🇳</b></div>
-                <div><i class="fa-solid fa-paw"></i> <span id="lbl-animals">Tiere</span>: <b id="val-animals">Tiere im Allgemeinen, besonders Katzen 🐱</b></div>
+                <div><i class="fa-solid fa-paw easter-trigger" onclick="catEasterEgg()"></i> <span id="lbl-animals">Tiere</span>: <b id="val-animals" class="easter-trigger" onclick="catEasterEgg()">Tiere im Allgemeinen, besonders Katzen 🐱</b></div>
                 <div><i class="fa-solid fa-heart"></i> <span id="lbl-hobbies">Hobbys</span>: <b id="val-hobbies">Sport, Games, Musik, Forschung & Coden</b></div>
-                <div><i class="fa-solid fa-infinity"></i> <span id="lbl-num">Lieblingszahl</span>: <b>&pi; (Pi)</b></div>
+                <div><i class="fa-solid fa-infinity easter-trigger" onclick="piEasterEgg()"></i> <span id="lbl-num">Lieblingszahl</span>: <b id="pi-val" class="easter-trigger" onclick="piEasterEgg()">&pi; (Pi)</b></div>
                 <div><i class="fa-solid fa-palette"></i> <span id="lbl-color">Lieblingsfarbe</span>: <b>Monochrome</b></div>
                 <div><i class="fa-solid fa-brain"></i> <span id="lbl-topic">Lieblingsthema</span>: <b id="val-topic">Wissenschaft, Tech, KI</b></div>
             </div>
 
+            <!-- Social Links -->
             <div class="section-title" id="lbl-contact-title">Kontakt & Links</div>
-            <div class="links-container">
-
-                <!-- Phone -->
+            <div class="links-container" id="links-container">
                 <div class="link-row">
-                    <a href="tel:015206964495" class="link-main-action">
-                        <i class="fa-solid fa-phone"></i> <span>01520 6964495</span>
-                    </a>
-                    <button class="btn-copy" onclick="copyText('015206964495')" title="Copy"><i class="fa-regular fa-copy"></i></button>
+                    <a href="tel:015206964495" class="link-main-action"><i class="fa-solid fa-phone"></i> <span>01520 6964495</span></a>
+                    <button class="btn-copy" onclick="copyText('015206964495')"><i class="fa-regular fa-copy"></i></button>
                 </div>
-
-                <!-- WhatsApp -->
                 <div class="link-row">
-                    <a href="https://wa.me/4915206964495" target="_blank" class="link-main-action">
-                        <i class="fa-brands fa-whatsapp"></i> <span>WhatsApp</span>
-                    </a>
-                    <button class="btn-copy" onclick="copyText('https://wa.me/4915206964495')" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
+                    <a href="https://wa.me/4915206964495" target="_blank" class="link-main-action"><i class="fa-brands fa-whatsapp"></i> <span>WhatsApp</span></a>
+                    <button class="btn-copy" onclick="copyText('https://wa.me/4915206964495')"><i class="fa-regular fa-copy"></i></button>
                 </div>
-
-                <!-- Instagram -->
                 <div class="link-row">
-                    <a href="https://www.instagram.com/theonlypersonthatnobodyknow/" target="_blank" class="link-main-action">
-                        <i class="fa-brands fa-instagram"></i> <span>Instagram</span>
-                    </a>
-                    <button class="btn-copy" onclick="copyText('https://www.instagram.com/theonlypersonthatnobodyknow/')" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
+                    <a href="https://www.instagram.com/theonlypersonthatnobodyknow/" target="_blank" class="link-main-action"><i class="fa-brands fa-instagram"></i> <span>Instagram</span></a>
+                    <button class="btn-copy" onclick="copyText('https://www.instagram.com/theonlypersonthatnobodyknow/')"><i class="fa-regular fa-copy"></i></button>
                 </div>
-
-                <!-- Discord -->
                 <div class="link-row">
-                    <a href="https://discordapp.com/users/560678903396565003" target="_blank" class="link-main-action">
-                        <i class="fa-brands fa-discord"></i> <span>Discord</span>
-                    </a>
-                    <button class="btn-copy" onclick="copyText('https://discordapp.com/users/560678903396565003')" title="Copy Discord Link"><i class="fa-regular fa-copy"></i></button>
+                    <a href="https://discordapp.com/users/560678903396565003" target="_blank" class="link-main-action"><i class="fa-brands fa-discord"></i> <span>Discord</span></a>
+                    <button class="btn-copy" onclick="copyText('https://discordapp.com/users/560678903396565003')"><i class="fa-regular fa-copy"></i></button>
                 </div>
-
-                <!-- Steam -->
                 <div class="link-row">
-                    <a href="https://steamcommunity.com/profiles/76561199179283822/" target="_blank" class="link-main-action">
-                        <i class="fa-brands fa-steam"></i> <span>Steam</span>
-                    </a>
-                    <button class="btn-copy" onclick="copyText('https://steamcommunity.com/profiles/76561199179283822/')" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
+                    <a href="https://steamcommunity.com/profiles/76561199179283822/" target="_blank" class="link-main-action"><i class="fa-brands fa-steam"></i> <span>Steam</span></a>
+                    <button class="btn-copy" onclick="copyText('https://steamcommunity.com/profiles/76561199179283822/')"><i class="fa-regular fa-copy"></i></button>
                 </div>
-
-                <!-- Gmail -->
                 <div class="link-row">
-                    <a href="mailto:mini46881@gmail.com" class="link-main-action">
-                        <i class="fa-solid fa-envelope"></i> <span>Gmail</span>
-                    </a>
-                    <button class="btn-copy" onclick="copyText('mini46881@gmail.com')" title="Copy Email"><i class="fa-regular fa-copy"></i></button>
+                    <a href="mailto:mini46881@gmail.com" class="link-main-action"><i class="fa-solid fa-envelope"></i> <span>Gmail</span></a>
+                    <button class="btn-copy" onclick="copyText('mini46881@gmail.com')"><i class="fa-regular fa-copy"></i></button>
                 </div>
-
-                <!-- GitHub -->
                 <div class="link-row">
-                    <a href="https://github.com/miniboss66666" target="_blank" class="link-main-action">
-                        <i class="fa-brands fa-github"></i> <span>GitHub</span>
-                    </a>
-                    <button class="btn-copy" onclick="copyText('https://github.com/miniboss66666')" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
+                    <a href="https://github.com/miniboss66666" target="_blank" class="link-main-action"><i class="fa-brands fa-github"></i> <span>GitHub</span></a>
+                    <button class="btn-copy" onclick="copyText('https://github.com/miniboss66666')"><i class="fa-regular fa-copy"></i></button>
                 </div>
-
             </div>
 
-            <!-- Message Form to Google Sheets -->
-            <div class="message-section">
-                <p id="lbl-msg-title" style="margin-bottom: 12px; font-weight: 600; font-size: 0.95rem;">Möchtest du mir etwas sagen?</p>
+            <!-- Google Sheet Messages Form -->
+            <div class="message-section" id="message-section">
+                <p id="lbl-msg-title">Möchtest du mir etwas sagen?</p>
                 <textarea id="guest-msg" class="mono-input" placeholder="Schreib hier etwas..."></textarea>
                 <button class="btn-action" style="width: 100%;" onclick="sendMessage()" id="btn-send">Senden &rarr;</button>
                 <div class="status-msg" id="status-msg"></div>
@@ -448,272 +124,15 @@
         </div>
     </div>
 
-    <script>
-        // Link Google Apps Script:
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz4IxAZfyMKdRHc_0RvfKlBNBDeScF0DjLdmDibYLCbukeMJEVNs5xXUNtUr3iSeLm0/exec";
+    <!-- Easter Egg Modal for Pi digits -->
+    <div id="pi-modal" class="modal" onclick="closePiModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>&pi; (Pi Number)</h3>
+            <p class="pi-digits" id="pi-text"></p>
+            <button class="btn-action" style="margin-top: 15px; width: 100%;" onclick="closePiModal()">Schließen</button>
+        </div>
+    </div>
 
-        // --- HỆ THỐNG ĐA NGÔN NGỮ (DE, VI, EN) ---
-        let currentLang = 'de';
-        let visitorName = '';
-
-        const i18n = {
-            de: {
-                askTitle: "Wie heißt du?",
-                askSub: "Bevor wir anfangen, sag mir bitte deinen Namen.",
-                askHolder: "Dein Name...",
-                btnEnter: "Enter →",
-                btnSkip: "Überspringen →",
-                defaultFriend: "mein Freund",
-                greet: (name) => `Hallo <b>${name}</b>! Ich heiße <b>Pham Minh Quang</b> (Pham ist mein Nachname). Aber du kannst mich einfach <b>P</b> (<b>Miniboss</b> ist mein Nickname) nennen. Willkommen in meiner Ecke!`,
-                lblHeight: "Größe",
-                lblBorn: "Geburtsjahr",
-                lblNat: "Nationalität",
-                lblAnimals: "Lieblingstiere",
-                valAnimals: "Tiere im Allgemeinen, besonders Katzen 🐱",
-                lblHobbies: "Hobbys",
-                valHobbies: "Sport, Games, Musik, Forschung & Coden",
-                lblNum: "Lieblingszahl",
-                lblColor: "Lieblingsfarbe",
-                lblTopic: "Lieblingsthema",
-                valTopic: "Wissenschaft, Tech, KI",
-                contactTitle: "Kontakt & Links",
-                msgTitle: "Das ist alles über mich. Möchtest du mir noch etwas sagen?",
-                msgHolder: "Hinterlasse mir eine Nachricht...",
-                btnSend: "Senden →",
-                sending: "Wird gesendet...",
-                sent: "Nachricht gesendet! Vielen Dank :D",
-                error: "Fehler beim Senden. Bitte versuche es erneut.",
-                copied: "In die Zwischenablage kopiert!"
-            },
-            vi: {
-                askTitle: "Bạn tên là gì?",
-                askSub: "Trước khi bắt đầu, hãy cho mình biết tên bạn nhé.",
-                askHolder: "Tên của bạn...",
-                btnEnter: "Tiếp tục →",
-                btnSkip: "Bỏ qua →",
-                defaultFriend: "bạn",
-                greet: (name) => `Chào <b>${name}</b>! Tôi tên là <b>Phạm Minh Quang</b> (Phạm là họ của tôi). Bạn có thể gọi tôi là <b>P</b> (<b>Miniboss</b> là biệt danh). Rất vui được gặp bạn!`,
-                lblHeight: "Chiều cao",
-                lblBorn: "Năm sinh",
-                lblNat: "Quốc tịch",
-                lblAnimals: "Động vật",
-                valAnimals: "Thích động vật, đặc biệt là mèo 🐱",
-                lblHobbies: "Sở thích",
-                valHobbies: "Thể thao, game, âm nhạc, nghiên cứu & Lập trình",
-                lblNum: "Số yêu thích",
-                lblColor: "Màu yêu thích",
-                lblTopic: "Chủ đề yêu thích",
-                valTopic: "Khoa học, Công nghệ, AI",
-                contactTitle: "Liên hệ & Liên kết",
-                msgTitle: "Đó là tất cả về tôi, có điều gì bạn muốn nói với tôi không?",
-                msgHolder: "Nhập lời nhắn của bạn...",
-                btnSend: "Gửi lời nhắn →",
-                sending: "Đang gửi...",
-                sent: "Đã gửi thành công! Cảm ơn bạn :D",
-                error: "Có lỗi khi gửi. Thử lại sau nhé!",
-                copied: "Đã sao chép vào bộ nhớ tạm!"
-            },
-            en: {
-                askTitle: "What's your name?",
-                askSub: "Before we start, please let me know who you are.",
-                askHolder: "Your name...",
-                btnEnter: "Enter →",
-                btnSkip: "Skip →",
-                defaultFriend: "my friend",
-                greet: (name) => `Hello <b>${name}</b>! I'm <b>Pham Minh Quang</b> (Pham is my surname). You can call me <b>P</b> (<b>Miniboss</b> is my Nickname). Welcome to my space!`,
-                lblHeight: "Height",
-                lblBorn: "Birth Year",
-                lblNat: "Nationality",
-                lblAnimals: "Animals",
-                valAnimals: "Love animals, especially cats 🐱",
-                lblHobbies: "Hobbies",
-                valHobbies: "Sports, games, music, research & Coding",
-                lblNum: "Favorite Number",
-                lblColor: "Favorite Color",
-                lblTopic: "Favorite Topic",
-                valTopic: "Science, Technology, AI",
-                contactTitle: "Contact & Links",
-                msgTitle: "That's all about me. Is there anything you'd like to tell me?",
-                msgHolder: "Leave a message...",
-                btnSend: "Send →",
-                sending: "Sending...",
-                sent: "Message sent! Thank you :D",
-                error: "Error sending message. Try again!",
-                copied: "Copied to clipboard!"
-            }
-        };
-
-        function updateTexts() {
-            const t = i18n[currentLang];
-            document.getElementById('lang-text').innerText = currentLang.toUpperCase();
-            document.getElementById('ask-name-title').innerText = t.askTitle;
-            document.getElementById('ask-name-sub').innerText = t.askSub;
-            document.getElementById('visitor-name').placeholder = t.askHolder;
-            document.getElementById('btn-enter').innerText = t.btnEnter;
-            document.getElementById('btn-skip').innerText = t.btnSkip;
-
-            if (visitorName) {
-                document.getElementById('bio-greeting').innerHTML = t.greet(visitorName);
-            }
-
-            document.getElementById('lbl-height').innerText = t.lblHeight;
-            document.getElementById('lbl-born').innerText = t.lblBorn;
-            document.getElementById('lbl-nat').innerText = t.lblNat;
-            document.getElementById('lbl-animals').innerText = t.lblAnimals;
-            document.getElementById('val-animals').innerText = t.valAnimals;
-            document.getElementById('lbl-hobbies').innerText = t.lblHobbies;
-            document.getElementById('val-hobbies').innerText = t.valHobbies;
-            document.getElementById('lbl-num').innerText = t.lblNum;
-            document.getElementById('lbl-color').innerText = t.lblColor;
-            document.getElementById('lbl-topic').innerText = t.lblTopic;
-            document.getElementById('val-topic').innerText = t.valTopic;
-            document.getElementById('lbl-contact-title').innerText = t.contactTitle;
-            document.getElementById('lbl-msg-title').innerText = t.msgTitle;
-            document.getElementById('guest-msg').placeholder = t.msgHolder;
-            document.getElementById('btn-send').innerText = t.btnSend;
-        }
-
-        function toggleLanguage() {
-            const langs = ['de', 'vi', 'en'];
-            let nextIndex = (langs.indexOf(currentLang) + 1) % langs.length;
-            currentLang = langs[nextIndex];
-            updateTexts();
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const themeBtnIcon = document.querySelector('#theme-btn i');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                themeBtnIcon.className = "fa-solid fa-sun";
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                themeBtnIcon.className = "fa-solid fa-moon";
-            }
-        }
-
-        function enterBio(isSkip = false) {
-            const input = document.getElementById('visitor-name');
-            if (isSkip) {
-                visitorName = i18n[currentLang].defaultFriend;
-            } else {
-                visitorName = input.value.trim() || i18n[currentLang].defaultFriend;
-            }
-            
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('main-bio').style.display = 'block';
-            updateTexts();
-        }
-
-        document.getElementById('visitor-name').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') enterBio(false);
-        });
-
-        // --- TÍNH NĂNG COPY NHANH ---
-        function copyText(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('toast');
-                toast.innerText = i18n[currentLang].copied;
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2000);
-            });
-        }
-
-        // --- GỬI TIN NHẮN VỀ GOOGLE SHEETS ---
-        async function sendMessage() {
-            const msgInput = document.getElementById('guest-msg');
-            const status = document.getElementById('status-msg');
-            const t = i18n[currentLang];
-            const message = msgInput.value.trim();
-
-            if (!message) return;
-
-            status.innerText = t.sending;
-            status.style.color = "var(--text-muted)";
-
-            try {
-                await fetch(GOOGLE_SHEET_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: visitorName, message: message })
-                });
-
-                status.innerText = t.sent;
-                status.style.color = "#4ade80";
-                msgInput.value = '';
-            } catch (err) {
-                status.innerText = t.error;
-                status.style.color = "#f87171";
-            }
-        }
-
-        // --- DYNAMIC VECTOR CANVAS (Constellation / Network Effect) ---
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.7;
-                this.vy = (Math.random() - 0.5) * 0.7;
-                this.radius = 1.5;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
-                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
-            }
-            draw() {
-                const isDark = document.body.getAttribute('data-theme') === 'dark';
-                ctx.fillStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < 60; i++) particles.push(new Particle());
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            const strokeStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < 110) {
-                        ctx.strokeStyle = strokeStyle;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-        animate();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
