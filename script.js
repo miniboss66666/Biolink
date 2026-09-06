@@ -1,14 +1,61 @@
 // ==================== CẤU HÌNH ====================
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz4IxAZfyMKdRHc_0RvfKlBNBDeScF0DjLdmDibYLCbukeMJEVNs5xXUNtUr3iSeLm0/exec";
 
-// Playlist Lofi chill (bro có thể thay bằng các link MP3 trực tiếp khác tùy thích)
+// ==================== MUSIC PLAYER (RANDOM & AUTO NEXT) ====================
+// Danh sách bài hát của bro trong GitHub:
 const PLAYLIST = [
-    { title: "Lofi Chill #1", url: "https://ia801503.us.archive.org/15/items/chill-lofi-song/ChillLofiSong.mp3" },
-    { title: "Lofi Chill #2", url: "https://ia902909.us.archive.org/21/items/rain-chill-lofi/RainChillLofi.mp3" }
+    { title: "Liszt - La Campanella", url: "Piano background music.mp3" },
+    { title: "佐小伊 - 露水情缘", url: "Chinese background music.mp3" },
+    { title: "Tăng Duy Tân - Cắt Đôi Nỗi Sầu", url: "cắt đôi nỗi sầu.mp3" },
+    { title: "Táo - Blue Tequila", url: "Táo Blue Tequila.mp3" },
+    { title: "Joe Hisaishi - Merry-Go-Round of Life", url: "Merry go round of life.mp33" },
+    { title: "Joe Hisaishi - A Town with an Ocean View", url: "A town with a ocean view.mp3" },
+    { title: "Sơn Tùng MTP - Đừng Làm Trái Tim Anh Đau", url: "đừng làm trái tim anh đau.mp3" }
 ];
-let currentTrack = 0;
+
+// 1. Chọn ngẫu nhiên 1 bài ngay khi khách vừa mở trang
+let currentTrack = Math.floor(Math.random() * PLAYLIST.length);
 let isPlaying = false;
 
+const audio = document.getElementById('bg-audio');
+
+function loadTrack(index) {
+    audio.src = PLAYLIST[index].url;
+    document.getElementById('music-title').innerText = PLAYLIST[index].title;
+}
+
+// Load bài ngẫu nhiên ban đầu
+loadTrack(currentTrack);
+
+// 2. Tự động chuyển bài ngẫu nhiên khác khi bài hiện tại hát xong
+audio.addEventListener('ended', () => {
+    let nextTrack;
+    // Đảm bảo không bốc trùng lại đúng bài vừa phát (nếu playlist có từ 2 bài trở lên)
+    do {
+        nextTrack = Math.floor(Math.random() * PLAYLIST.length);
+    } while (PLAYLIST.length > 1 && nextTrack === currentTrack);
+
+    currentTrack = nextTrack;
+    loadTrack(currentTrack);
+    audio.play();
+});
+
+// 3. Nút Play / Pause
+function toggleMusic() {
+    const icon = document.getElementById('music-icon');
+    if (!isPlaying) {
+        audio.play().then(() => {
+            isPlaying = true;
+            icon.className = "fa-solid fa-pause";
+        }).catch((err) => {
+            console.log("Audio play error:", err);
+        });
+    } else {
+        audio.pause();
+        isPlaying = false;
+        icon.className = "fa-solid fa-play";
+    }
+}
 // ==================== ĐA NGÔN NGỮ ====================
 let currentLang = 'de';
 let visitorName = '';
