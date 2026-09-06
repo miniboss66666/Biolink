@@ -15,7 +15,7 @@
     <div id="toast">Copied!</div>
 
     <!-- Top Controls: Music, Lang, Theme -->
-    <div class="top-controls">
+   <div class="top-controls">
         <!-- Modern Mini Player -->
         <div class="mini-player" id="mini-player">
             <div class="player-top">
@@ -31,9 +31,14 @@
                     <button class="p-btn" onclick="nextTrack()" title="Next"><i class="fa-solid fa-forward-step"></i></button>
                 </div>
             </div>
-            <!-- Progress Bar -->
-            <div class="progress-bar-container" id="progress-container" onclick="seekAudio(event)">
-                <div class="progress-bar" id="progress-bar"></div>
+            <!-- Progress Bar + Time -->
+            <div class="progress-wrap">
+                <div class="progress-bar-container" id="progress-container" onclick="seekAudio(event)">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="time-display">
+                    <span id="current-time">0:00</span> / <span id="duration-time">0:00</span>
+                </div>
             </div>
         </div>
 
@@ -44,7 +49,6 @@
             <i class="fa-solid fa-moon"></i>
         </button>
     </div>
-
     <!-- Background Audio Element -->
     <audio id="bg-audio" preload="none"></audio>
 
