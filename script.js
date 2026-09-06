@@ -124,7 +124,7 @@ function updateGermanyTime() {
 setInterval(updateGermanyTime, 1000);
 updateGermanyTime();
 
-// ==================== MUSIC PLAYER (SAFE & BULLETPROOF) ====================
+// ==================== MUSIC PLAYER (ADVANCED) ====================
 const PLAYLIST = [
     { title: "La Campanella", url: "Piano background music.mp3" },
     { title: "Chinese Chill", url: "Chinese background music.mp3" },
@@ -143,49 +143,96 @@ function initMusicPlayer() {
     audio = document.getElementById('bg-audio');
     if (!audio) return;
 
-    // Load bài ngẫu nhiên ban đầu
     loadTrack(currentTrack);
 
-    // Tự chuyển bài ngẫu nhiên khi bài hiện tại hát xong
-    audio.onended = () => {
-        let nextTrack;
-        do {
-            nextTrack = Math.floor(Math.random() * PLAYLIST.length);
-        } while (PLAYLIST.length > 1 && nextTrack === currentTrack);
+    // Cập nhật thanh tiến trình theo thời gian bài hát
+    audio.ontimeupdate = updateProgress;
 
-        currentTrack = nextTrack;
-        loadTrack(currentTrack);
-        audio.play().catch(err => console.log("Auto-next blocked:", err));
-    };
+    // Tự động nhảy bài khi hết nhạc
+    audio.onended = () => nextTrack();
+
+    // Cố gắng tự động phát ngay khi vào web
+    autoPlayAttempt();
 }
 
 function loadTrack(index) {
     if (!audio || !PLAYLIST[index]) return;
-    // Tự động mã hoá URL cho các file có dấu cách / tiếng Việt
     audio.src = encodeURI(PLAYLIST[index].url);
     const titleEl = document.getElementById('music-title');
     if (titleEl) titleEl.innerText = PLAYLIST[index].title;
+    updateProgressBar(0);
+}
+
+function autoPlayAttempt() {
+    // Thử auto-play lúc mới tải trang
+    audio.play().then(() => {
+        setPlayState(true);
+    }).catch(() => {
+        // Nếu trình duyệt chặn, chờ cú click/chạm đầu tiên bất kỳ trên web là tự phát ngay
+        const startOnInteract = () => {
+            if (!isPlaying) {
+                audio.play().then(() => setPlayState(true)).catch(() => {});
+            }
+            window.removeEventListener('click', startOnInteract);
+            window.removeEventListener('keydown', startOnInteract);
+            window.removeEventListener('touchstart', startOnInteract);
+        };
+        window.addEventListener('click', startOnInteract);
+        window.addEventListener('keydown', startOnInteract);
+        window.addEventListener('touchstart', startOnInteract);
+    });
+}
+
+function setPlayState(playing) {
+    isPlaying = playing;
+    const icon = document.getElementById('music-icon');
+    if (icon) {
+        icon.className = isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
+    }
 }
 
 function toggleMusic() {
-    if (!audio) audio = document.getElementById('bg-audio');
     if (!audio) return;
-
-    const icon = document.getElementById('music-icon');
-    if (!isPlaying) {
-        audio.play().then(() => {
-            isPlaying = true;
-            if (icon) icon.className = "fa-solid fa-pause";
-            const titleEl = document.getElementById('music-title');
-            if (titleEl) titleEl.innerText = PLAYLIST[currentTrack].title;
-        }).catch((err) => {
-            console.log("Play failed / Browser policy:", err);
-        });
-    } else {
+    if (isPlaying) {
         audio.pause();
-        isPlaying = false;
-        if (icon) icon.className = "fa-solid fa-play";
+        setPlayState(false);
+    } else {
+        audio.play().then(() => setPlayState(true)).catch(err => console.log(err));
     }
+}
+
+function nextTrack() {
+    currentTrack = (currentTrack + 1) % PLAYLIST.length;
+    loadTrack(currentTrack);
+    audio.play().then(() => setPlayState(true)).catch(err => console.log(err));
+}
+
+function prevTrack() {
+    currentTrack = (currentTrack - 1 + PLAYLIST.length) % PLAYLIST.length;
+    loadTrack(currentTrack);
+    audio.play().then(() => setPlayState(true)).catch(err => console.log(err));
+}
+
+// Cập nhật thanh % tiến trình
+function updateProgress() {
+    if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        updateProgressBar(percent);
+    }
+}
+
+function updateProgressBar(percent) {
+    const bar = document.getElementById('progress-bar');
+    if (bar) bar.style.width = `${percent}%`;
+}
+
+// Bấm vào thanh tiến trình để tua nhạc (Seek)
+function seekAudio(e) {
+    if (!audio || !audio.duration) return;
+    const container = document.getElementById('progress-container');
+    const width = container.clientWidth;
+    const clickX = e.offsetX;
+    audio.currentTime = (clickX / width) * audio.duration;
 }
 
 // ==================== AI STREAMING SIMULATION ====================
