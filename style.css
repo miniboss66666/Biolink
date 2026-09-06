@@ -419,34 +419,34 @@ textarea.mono-input {
         transform: translateY(110vh) rotate(360deg);
     }
 }
-/* ================= MINI MUSIC PLAYER ================= */
+/* ================= MINI MUSIC PLAYER FIX ================= */
 .mini-player {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 6px 14px;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    backdrop-filter: blur(15px);
+    border-radius: 14px;
+    padding: 8px 14px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    min-width: 220px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    gap: 6px;
+    min-width: 250px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .player-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
 }
 
 .player-track-info {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.78rem;
+    gap: 8px;
+    font-size: 0.8rem;
     font-weight: 600;
-    max-width: 120px;
+    max-width: 130px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -454,56 +454,64 @@ textarea.mono-input {
 }
 
 .music-note-icon {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
 }
 
 .player-controls {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .p-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-muted) !important;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     padding: 4px 6px;
     border-radius: 6px;
     transition: 0.2s all;
 }
 
 .p-btn:hover {
-    color: var(--accent);
-    transform: scale(1.1);
+    color: var(--accent) !important;
+    transform: scale(1.15);
 }
 
 .p-btn.play-main {
-    color: var(--text-main);
-    font-size: 0.9rem;
+    color: var(--text-main) !important;
+    font-size: 1rem;
 }
 
-/* Progress Bar */
+/* Progress Wrap */
+.progress-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
 .progress-bar-container {
     width: 100%;
-    height: 4px;
-    background: rgba(128, 128, 128, 0.2);
+    height: 6px;
+    background: rgba(128, 128, 128, 0.25);
     border-radius: 4px;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
 }
 
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: var(--text-main);
+    background: var(--accent);
     border-radius: 4px;
-    transition: width 0.1s linear;
+    pointer-events: none;
 }
 
-.progress-bar-container:hover .progress-bar {
-    background: #38bdf8; /* Highlight nhẹ khi hover */
+.time-display {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 0.65rem;
+    color: var(--text-muted);
 }
